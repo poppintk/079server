@@ -1451,18 +1451,38 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                 throw new DatabaseException("Character not in database (" + this.id + ")");
             }
             ps.close();
-            ps = con.prepareStatement("UPDATE skillmacros SET `skill1` = ?, `skill2` = ?, `skill3` = ?, `name` = ?, `shout` = ? WHERE `characterid` = ? and `position` = ?");
-            ps.setInt(6, this.id);
             for (int j = 0; j < 5; ++j) {
                 final SkillMacro macro = this.skillMacros[j];
                 if (macro != null) {
-                    ps.setInt(1, macro.getSkill1());
-                    ps.setInt(2, macro.getSkill2());
-                    ps.setInt(3, macro.getSkill3());
-                    ps.setString(4, macro.getName());
-                    ps.setInt(5, macro.getShout());
-                    ps.setInt(7, j);
-                    ps.executeUpdate();
+                    String checkQuery = "SELECT id FROM skillmacros WHERE characterid = ? AND position = ?";
+                    PreparedStatement checkStmt = con.prepareStatement(checkQuery);
+                    checkStmt.setInt(1, this.id);
+                    checkStmt.setInt(2, j);
+                    ResultSet skillmacro_rs = checkStmt.executeQuery();
+                    if (skillmacro_rs.next()) {
+                        // If the record exists, perform an `UPDATE` operation
+                        String updateQuery = "UPDATE skillmacros SET skill1 = ?, skill2 = ?, skill3 = ?, name = ?, shout = ? WHERE id = ?";
+                        PreparedStatement updateStmt = con.prepareStatement(updateQuery);
+                        updateStmt.setInt(1, macro.getSkill1());
+                        updateStmt.setInt(2, macro.getSkill2());
+                        updateStmt.setInt(3, macro.getSkill3());
+                        updateStmt.setString(4, macro.getName());
+                        updateStmt.setInt(5, macro.getShout());
+                        updateStmt.setInt(6, skillmacro_rs.getInt("id"));
+                        updateStmt.executeUpdate();
+                    } else {
+                        // If the record does not exist, perform an `INSERT` operation
+                        String insertQuery = "INSERT INTO skillmacros (skill1, skill2, skill3, name, shout, characterid, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        PreparedStatement insertStmt = con.prepareStatement(insertQuery);
+                        insertStmt.setInt(1, macro.getSkill1());
+                        insertStmt.setInt(2, macro.getSkill2());
+                        insertStmt.setInt(3, macro.getSkill3());
+                        insertStmt.setString(4, macro.getName());
+                        insertStmt.setInt(5, macro.getShout());
+                        insertStmt.setInt(6, this.id);
+                        insertStmt.setInt(7, j);
+                        insertStmt.executeUpdate();
+                    }
                 }
             }
             ps = con.prepareStatement("UPDATE inventoryslot SET `equip` = ?, `use` = ?, `setup` = ?, `etc` = ?, `cash` = ? WHERE characterid = ?");
