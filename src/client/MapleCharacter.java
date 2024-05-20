@@ -1451,40 +1451,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                 throw new DatabaseException("Character not in database (" + this.id + ")");
             }
             ps.close();
-            for (int j = 0; j < 5; ++j) {
-                final SkillMacro macro = this.skillMacros[j];
-                if (macro != null) {
-                    String checkQuery = "SELECT id FROM skillmacros WHERE characterid = ? AND position = ?";
-                    PreparedStatement checkStmt = con.prepareStatement(checkQuery);
-                    checkStmt.setInt(1, this.id);
-                    checkStmt.setInt(2, j);
-                    ResultSet skillmacro_rs = checkStmt.executeQuery();
-                    if (skillmacro_rs.next()) {
-                        // If the record exists, perform an `UPDATE` operation
-                        String updateQuery = "UPDATE skillmacros SET skill1 = ?, skill2 = ?, skill3 = ?, name = ?, shout = ? WHERE id = ?";
-                        PreparedStatement updateStmt = con.prepareStatement(updateQuery);
-                        updateStmt.setInt(1, macro.getSkill1());
-                        updateStmt.setInt(2, macro.getSkill2());
-                        updateStmt.setInt(3, macro.getSkill3());
-                        updateStmt.setString(4, macro.getName());
-                        updateStmt.setInt(5, macro.getShout());
-                        updateStmt.setInt(6, skillmacro_rs.getInt("id"));
-                        updateStmt.executeUpdate();
-                    } else {
-                        // If the record does not exist, perform an `INSERT` operation
-                        String insertQuery = "INSERT INTO skillmacros (skill1, skill2, skill3, name, shout, characterid, position) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                        PreparedStatement insertStmt = con.prepareStatement(insertQuery);
-                        insertStmt.setInt(1, macro.getSkill1());
-                        insertStmt.setInt(2, macro.getSkill2());
-                        insertStmt.setInt(3, macro.getSkill3());
-                        insertStmt.setString(4, macro.getName());
-                        insertStmt.setInt(5, macro.getShout());
-                        insertStmt.setInt(6, this.id);
-                        insertStmt.setInt(7, j);
-                        insertStmt.executeUpdate();
-                    }
-                }
-            }
+
             ps = con.prepareStatement("UPDATE inventoryslot SET `equip` = ?, `use` = ?, `setup` = ?, `etc` = ?, `cash` = ? WHERE characterid = ?");
             ps.setByte(1, this.getInventory(MapleInventoryType.EQUIP).getSlotLimit());
             ps.setByte(2, this.getInventory(MapleInventoryType.USE).getSlotLimit());
@@ -4099,6 +4066,41 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
     
     public void updateMacros(final int position, final SkillMacro updateMacro) {
         this.skillMacros[position] = updateMacro;
+        try {
+            final Connection con = DatabaseConnection.getConnection();
+            String searchQuery = "SELECT * from skillmacros where characterid = ? AND position = ?";
+            PreparedStatement ps = con.prepareStatement(searchQuery);
+            ps.setInt(1, this.id);
+            ps.setInt(2, position);
+            ResultSet resultSet = ps.executeQuery();
+            if (!resultSet.next()) {
+                String insertQuery = "INSERT INTO skillmacros (characterid, position, skill1, skill2, skill3, name, shout) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                ps = con.prepareStatement(insertQuery);
+                ps.setInt(1, this.id);
+                ps.setInt(2, position);
+                ps.setInt(3, updateMacro.getSkill1());
+                ps.setInt(4, updateMacro.getSkill2());
+                ps.setInt(5, updateMacro.getSkill3());
+                ps.setString(6, updateMacro.getName());
+                ps.setInt(7, updateMacro.getShout());
+                ps.executeUpdate();
+            } else {
+                String updateQuery = "UPDATE skillmacros SET skill1 = ?, skill2 = ?, skill3 = ?, name = ?, shout = ? WHERE position = ? AND characterid = ?";
+                ps = con.prepareStatement(updateQuery);
+                ps.setInt(1, updateMacro.getSkill1());
+                ps.setInt(2, updateMacro.getSkill2());
+                ps.setInt(3, updateMacro.getSkill3());
+                ps.setString(4, updateMacro.getName());
+                ps.setInt(5, updateMacro.getShout());
+                ps.setInt(6, position);
+                ps.setInt(7, this.id);
+                ps.executeUpdate();
+            }
+            ps.close();
+        }catch (SQLException ex) {
+            System.err.println("Error while banning" + ex);
+        }
+
     }
     
     public SkillMacro[] getMacros() {

@@ -1,0 +1,18 @@
+﻿version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7575:7575"
+      - "9595:9595"
+      - "8600:8600"
+    volumes:
+      - ./scripts:/scripts
+      - ./config:/config
+    environment:
+      - homePath=./config/
+      - scriptsPath=./scripts/
+      - wzPath=./scripts/wz
+      - JAVA_OPTS=-Xms512m -Xmx2048m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxNewSize=512m

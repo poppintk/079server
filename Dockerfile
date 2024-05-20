@@ -26,6 +26,13 @@ ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:Max
 EXPOSE 7575
 EXPOSE 9595
 EXPOSE 8600
+EXPOSE 2525
+EXPOSE 2526
+EXPOSE 2527
+EXPOSE 2528
+EXPOSE 2529
+EXPOSE 2530
+
 
 # Run the jar file
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -cp /app.jar -server -DhomePath=$homePath -DscriptsPath=$scriptsPath -DwzPath=$wzPath server.Start" ]
