@@ -4096,6 +4096,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements Se
                 ps.setInt(7, this.id);
                 ps.executeUpdate();
             }
+            resultSet.close();
             ps.close();
         }catch (SQLException ex) {
             System.err.println("Error while banning" + ex);
