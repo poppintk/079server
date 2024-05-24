@@ -262,7 +262,7 @@ public enum SendPacketOpcode implements WritableIntValueHolder
     
     public static Properties getDefaultProperties() throws FileNotFoundException, IOException {
         final Properties props = new Properties();
-        final FileInputStream fileInputStream = new FileInputStream("sendops.properties");
+        final FileInputStream fileInputStream = new FileInputStream("main/resources/sendops.properties");
         props.load(fileInputStream);
         fileInputStream.close();
         return props;

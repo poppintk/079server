@@ -2,7 +2,7 @@
 FROM openjdk:7u91-jdk-alpine
 
 # The application's jar file
-ARG JAR_FILE=out/artifacts/079server_jar/079server.jar
+ARG JAR_FILE=target/maple_079-1.0.jar
 
 # Add the application's jar to the container
 ADD ${JAR_FILE} app.jar
