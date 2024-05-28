@@ -190,7 +190,7 @@ function action(mode, type, selection) {
             cm.forceCompleteQuest(7000);
             cm.completeQuest(100203);
             cm.sendOk("好了，祝你玩的愉快！");
-            cm.gainMeso(-15000000);
+            cm.gainMeso(-1000000);
         }
         cm.dispose();
     } else {

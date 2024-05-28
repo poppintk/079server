@@ -33,7 +33,7 @@ function action(mode, type, selection) {
 			text += " #L3##b#e坐骑专卖#l           \r\n"
 			text += " #L5##r#e装备买卖#l            \r\n" 
 			text += " #L6##r#e冲级武器#l            \r\n"
-			//text += " #L7##b#e120级寻宝武器#l      #L8##b#e79级紫金枫叶套#l \r\n" 
+			// text += " #L7##b#e120级寻宝武器#l      #L8##b#e79级紫金枫叶套#l \r\n"
 			  
 			
 			cm.sendSimple(text);
@@ -63,10 +63,8 @@ function action(mode, type, selection) {
             cm.dispose();
 			
 			} else if (selection == 6) {
-				cm.sendNext("期待开启");
-				cm.dispose();
-            //cm.openShop(9310001);
-            //cm.dispose();
+            cm.openShop(9310001);
+            cm.dispose();
 
         } else if (selection == 7) {
             cm.openShop(8);
