@@ -2,3 +2,5 @@
 .dist/
 out/
 .idea/
+/target/
+/src/tools/wztosql/
