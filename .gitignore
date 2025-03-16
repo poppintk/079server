@@ -4,3 +4,4 @@ out/
 .idea/
 /target/
 /src/tools/wztosql/
+/logs/

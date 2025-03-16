@@ -37,14 +37,35 @@ public abstract class AbstractScriptManager {
                 if (!scriptFile.exists()) {
                     return null;
                 }
-                engine = AbstractScriptManager.sem.getEngineByName("javascript");
+                // Create engine with system class loader
+                ScriptEngineManager sem = new ScriptEngineManager(ClassLoader.getSystemClassLoader());
+                engine = sem.getEngineByName("javascript");
                 if (c != null) {
                     c.setScriptEngine(path, engine);
                 }
+                
                 // Add importPackage function for Nashorn compatibility
                 engine.eval("function importPackage(pkg) { for (var i in pkg) { this[i] = pkg[i]; } }");
-                // Import required classes
-                engine.eval("var MaplePacketCreator = Java.type('tools.MaplePacketCreator');");
+                
+                // Import required classes with correct package paths and detailed error handling
+                try {
+                    // Verify required classes exist
+                    Class.forName("tools.MaplePacketCreator");
+                    Class.forName("server.life.MapleLifeFactory");
+                    
+                    // Import specific classes we need
+                    engine.eval("var MaplePacketCreator = Java.type('tools.MaplePacketCreator');");
+                    engine.eval("var MapleLifeFactory = Java.type('server.life.MapleLifeFactory');");
+                } catch (Exception e) {
+                    System.err.println("Failed to load required classes. Current classpath: " +
+                        System.getProperty("java.class.path"));
+                    System.err.println("Attempted to load classes:");
+                    System.err.println("- tools.MaplePacketCreator");
+                    System.err.println("- server.life.MapleLifeFactory");
+                    e.printStackTrace();
+                    throw new RuntimeException("Failed to initialize script engine classes. Please verify the required classes exist in the classpath.", e);
+                }
+                
                 fr = new FileInputStream(scriptFile);
                 final BufferedReader bf = new BufferedReader(new InputStreamReader(fr, EncodingDetect.getJavaEncode(scriptFile)));
                 engine.eval(bf);
