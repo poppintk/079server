@@ -41,6 +41,10 @@ public abstract class AbstractScriptManager {
                 if (c != null) {
                     c.setScriptEngine(path, engine);
                 }
+                // Add importPackage function for Nashorn compatibility
+                engine.eval("function importPackage(pkg) { for (var i in pkg) { this[i] = pkg[i]; } }");
+                // Import required classes
+                engine.eval("var MaplePacketCreator = Java.type('tools.MaplePacketCreator');");
                 fr = new FileInputStream(scriptFile);
                 final BufferedReader bf = new BufferedReader(new InputStreamReader(fr, EncodingDetect.getJavaEncode(scriptFile)));
                 engine.eval(bf);
