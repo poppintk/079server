@@ -1,5 +1,5 @@
- importPackage(net.sf.cherry.client);
-var status = 0;
+ var client = Packages.net.sf.cherry.client;
+ var status = 0;
 
 var ttt ="#fUI/UIWindow.img/Quest/icon9/0#";
 var xxx ="#fUI/UIWindow.img/Quest/icon8/0#";

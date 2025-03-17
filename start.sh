@@ -3,4 +3,4 @@ echo "
 |                   冒险岛079 FOR CentOS/Ubuntu/Debian
 +----------------------------------------------------------------------
 "
-java -cp ./bin/079server.jar -server -DhomePath=./config/ -DscriptsPath=./scripts/ -DwzPath=./scripts/wz -Xms512m -Xmx2048m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxNewSize=512m server.Start
+java -cp ./bin/079server.jar -server -Djava.awt.im.style=off -DhomePath=./config/ -DscriptsPath=./scripts/ -DwzPath=./scripts/wz -Xms2024m -Xmx4048m -XX:MaxNewSize=2024m server.Start
